@@ -1,0 +1,24 @@
+{% load static %}
+<section class="fixed-top navigation">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="{% url 'basic:home' %}"><img src="{% static 'auth/assets/images/logo-dark.svg' %}" alt="logo"></a>
+        <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar"
+          aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- navbar -->
+        <div class="collapse navbar-collapse text-center" id="navbar">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'basic:home' %}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link page-scroll" href="#feature">Feature</a>
+            </li>
+          </ul>
+          <a href="{% url 'auth:login' %}" class="btn btn-primary ml-lg-3 primary-shadow">Get Started</a>
+        </div>
+      </nav>
+    </div>
+</section>
