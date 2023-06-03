@@ -2,9 +2,22 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.shortcuts import reverse
 import uuid
-# My app imports
-
 # Create your models here.
+
+
+class Department(models.Model):
+    dept_id = models.UUIDField(
+        default=uuid.uuid4, primary_key=True, unique=True, editable=False)
+    dept_title = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.dept_title
+
+    class Meta:
+        db_table = 'Department'
+        verbose_name_plural = 'Departments'
+
+
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
 
@@ -44,6 +57,7 @@ class UserManager(BaseUserManager):
 
         return user
 
+
 class User(AbstractBaseUser, PermissionsMixin):
     user_id = models.UUIDField(
         default=uuid.uuid4, primary_key=True, unique=True, editable=False)
@@ -55,6 +69,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     pics = models.ImageField(
         default='img/user.png', upload_to='uploads/', null=True)
 
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, blank=True, null=True,)
+
     date_joined = models.DateTimeField(
         verbose_name='date_joined', auto_now_add=True)
     last_login = models.DateTimeField(
@@ -62,6 +79,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_dept = models.BooleanField(default=False)
     is_central = models.BooleanField(default=False)
     is_dean = models.BooleanField(default=False)
     is_hod = models.BooleanField(default=False)
@@ -85,4 +103,3 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         db_table = 'Users'
         verbose_name_plural = 'Users'
-
