@@ -16,4 +16,7 @@ urlpatterns = [
     path('apply_leave', LeaveCreateView.as_view(), name="apply_leave"),
     path('manage_leaves', ManageLeaves.as_view(), name="manage_leaves"),
     path('delete_leave/<str:pk>', DeleteLeaveView.as_view(), name="delete_leave"),
+    path('edit_leave/<str:pk>', EditLeaveView.as_view(), name="edit_leave"),
+
+    path('approve_leave/<str:leave_id>/<str:type>', ApproveDisapproveLeaveView.as_view(), name="approve_leave"),
 ]

@@ -26,7 +26,11 @@
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="{% url 'auth:dashboard' %}">dashboard</a></li>
+
+                  {% if not request.user.is_dept %}
                   <li class="breadcrumb-item"><a href="{% url 'auth:apply_leave' %}">apply_leave</a></li>
+                  {% endif %}
+
                   <li class="breadcrumb-item active" aria-current="page">manage leave</li>
                 </ol>
               </nav>
@@ -35,9 +39,9 @@
               <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Accounts</h4>
+                    <h4 class="card-title">Leaves</h4>
                     <p class="card-description"> The record below contains all your requested leave </p>
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover table-responsive">
                       <thead>
                         <tr>
                           <th> Picture </th>
@@ -55,7 +59,8 @@
                         {% for object in object_list %}
                         <tr>
                           <td class="py-1">
-                            <a href="">
+                            <a  {% if not request.user.is_dept %} href="{% url 'auth:edit_leave' object.pk %}"
+                            {% endif %}>
                               <img src="{{ object.user.pics.url }}" width="60" alt="image" />
                             </a>
                           </td>
@@ -97,9 +102,30 @@
                                 </div>
                               </div>
                             </div>
-
                           </td>
+
                           <td>
+                            {% if request.user.is_dept %}
+                            <div class="row">
+                              <div class="col-6">
+                                <form method="post" action="{% url 'auth:approve_leave' object.pk 'approve' %}">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn btn-inverse-primary btn-rounded btn-icon">
+                                    <i class="mdi mdi-calendar-multiple-check"></i>
+                                  </button>
+                                </form>
+                              </div>
+                              <div class="col-6">
+                                <form method="post" action="{% url 'auth:approve_leave' object.pk 'disapprove' %}">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn btn-inverse-danger btn-rounded btn-icon">
+                                    <i class="mdi mdi-calendar-multiple-check"></i>
+                                  </button>
+                                </form>
+                              </div>
+                            </div>
+
+                            {% else %}
                             <button type="button" class="btn btn-inverse-danger btn-rounded btn-icon" data-toggle="modal" data-target="#deleteModal{{forloop.counter}}">
                               <i class="mdi mdi-delete-forever"></i>
                             </button>
@@ -127,13 +153,12 @@
                                 </div>
                               </div>
                             </div>
+                            {% endif %}
 
                           </td>
                         </tr>
 
                         {% endfor %}
-
-
 
                       </tbody>
                     </table>

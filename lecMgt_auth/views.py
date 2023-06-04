@@ -185,3 +185,33 @@ class DeleteLeaveView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     success_message = 'Deleted successfully!'
     success_url = reverse_lazy('auth:manage_leaves')
 
+class EditLeaveView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+    model = Leave
+    template_name = "backend/auth/leave/create_update_leave.html"
+    form_class = LeaveApplicationForm
+    success_message = 'Leave Updated Successfully!'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["type"] = 'Update'
+        return context
+
+    def get_success_url(self):
+        return reverse("auth:manage_leaves")
+
+class ApproveDisapproveLeaveView(LoginRequiredMixin, View):
+
+    def post(self, request, leave_id, type):
+        leave = Leave.objects.get(leave_id=leave_id)
+        if type == 'approve':
+            leave.dept_approval = True
+            messages.success(
+            request, 'Leave has been approved')
+        else:
+            leave.dept_approval = False
+            messages.success(
+            request, 'Leave has been disapproved')
+
+        leave.save()
+        return redirect('auth:manage_leaves')
+
