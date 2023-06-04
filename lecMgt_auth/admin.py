@@ -5,3 +5,4 @@ from lecMgt_auth.models import *
 admin.site.register(User)
 admin.site.register(Department)
 admin.site.register(Reasons)
+admin.site.register(Leave)

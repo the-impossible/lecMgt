@@ -124,3 +124,36 @@ class EditAccountCreationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email', 'name', 'user_type', 'department', 'pics')
+
+class LeaveApplicationForm(forms.ModelForm):
+
+    details = forms.CharField(help_text='Leave Details', widget=forms.Textarea(
+        attrs={
+            'class': 'form-control form-control-lg input-lg',
+            'rows': 3,
+        }
+    ))
+
+    reason = forms.ModelChoiceField(queryset=Reasons.objects.all(), empty_label="(Select Reason)", required=True, help_text="Select Reason",  widget=forms.Select(
+        attrs={
+            'class': 'form-control',
+        }
+    ))
+
+    start_date = forms.DateField(help_text='Enter Start Date', widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'type': 'date',
+        }
+    ))
+
+    end_date = forms.DateField(help_text='Enter End Date', widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'type': 'date',
+        }
+    ))
+
+    class Meta:
+        model = Leave
+        fields = ('reason', 'start_date', 'end_date', 'details')

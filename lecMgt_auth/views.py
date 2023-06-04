@@ -122,8 +122,6 @@ class EditAccountView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         user_type = form.cleaned_data.get('user_type')
-        pics = form.cleaned_data.get('pics')
-        print(f'CONFIRM: {pics}')
 
         form.instance.is_central = False
         form.instance.is_dean = False
@@ -151,3 +149,25 @@ class DeleteAccountView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = User
     success_message = 'Deleted successfully!'
     success_url = reverse_lazy('auth:manage_accounts')
+
+
+class LeaveCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Leave
+    form_class = LeaveApplicationForm
+    template_name = "backend/auth/create_update_leave.html"
+    success_message = "Leave has been requested successfully!"
+
+    def get_success_url(self):
+        return reverse("auth:apply_leave")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["type"] = 'Apply'
+        return context
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+
+        form = super().form_valid(form)
+
+        return form
