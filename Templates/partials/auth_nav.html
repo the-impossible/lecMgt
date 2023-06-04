@@ -26,7 +26,7 @@
             </div>
             <div class="p-2">
               <h5 class="dropdown-header text-uppercase pl-2 text-dark text-center">{{request.user.name}}</h5>
-              
+
               <div role="separator" class="dropdown-divider"></div>
               <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="#">
                 <span>Profile</span>
@@ -39,7 +39,7 @@
                 <span>Settings</span>
                 <i class="mdi mdi-settings"></i>
               </a>
-              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" href="#">
+              <a class="dropdown-item py-1 d-flex align-items-center justify-content-between" data-toggle="modal" data-target="#basicModal">
                 <span>Log Out</span>
                 <i class="mdi mdi-logout ml-1"></i>
               </a>
@@ -100,4 +100,7 @@
         <span class="mdi mdi-menu"></span>
       </button>
     </div>
+
   </nav>
+
+

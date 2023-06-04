@@ -48,7 +48,7 @@ class AccountCreationForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data.get('12345678'))
+        user.set_password('12345678')
 
         if commit:
             user.save()

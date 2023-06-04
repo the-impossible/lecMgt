@@ -1,0 +1,13 @@
+{% if object.is_staff %}
+    System admin
+{% elif object.is_central %}
+    Central admin
+    {% elif object.is_dean %}
+    Dean office
+    {% elif object.is_hod %}
+    HOD office
+    {% elif object.is_dept %}
+    Dept. Admin
+    {% else %}
+    Lecturer
+{% endif %}

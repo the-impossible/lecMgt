@@ -54,7 +54,7 @@ class LogoutView(LoginRequiredMixin, View):
             request, 'You are successfully logged out, to continue login again')
         return redirect('auth:login')
 
-class CreateAccountPageView(SuccessMessageMixin, CreateView):
+class CreateAccountPageView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = User
     form_class = AccountCreationForm
     template_name = "backend/auth/create_account.html"
@@ -81,7 +81,7 @@ class CreateAccountPageView(SuccessMessageMixin, CreateView):
 
         return form
 
-class ManageAccounts(ListView):
+class ManageAccounts(LoginRequiredMixin, ListView):
     template_name = 'backend/auth/manage_accounts.html'
 
     def get_queryset(self):
@@ -94,3 +94,8 @@ class ManageAccounts(ListView):
     #     context = super().get_context_data(**kwargs)
     #     context["form"] = ScheduleTestForm
     #     return context
+
+class DeleteAccountView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = User
+    success_message = 'Deleted successfully!'
+    success_url = reverse_lazy('auth:manage_accounts')
