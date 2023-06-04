@@ -154,7 +154,7 @@ class DeleteAccountView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 class LeaveCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Leave
     form_class = LeaveApplicationForm
-    template_name = "backend/auth/create_update_leave.html"
+    template_name = "backend/auth/leave/create_update_leave.html"
     success_message = "Leave has been requested successfully!"
 
     def get_success_url(self):
@@ -167,7 +167,21 @@ class LeaveCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-
         form = super().form_valid(form)
 
         return form
+
+class ManageLeaves(LoginRequiredMixin, ListView):
+    template_name = 'backend/auth/leave/manage_leave.html'
+
+    def get_queryset(self):
+        return Leave.objects.all().order_by('-created')
+
+    def get_success_url(self):
+        return reverse("auth:manage_leaves")
+
+class DeleteLeaveView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = Leave
+    success_message = 'Deleted successfully!'
+    success_url = reverse_lazy('auth:manage_leaves')
+

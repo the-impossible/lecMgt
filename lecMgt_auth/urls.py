@@ -14,4 +14,6 @@ urlpatterns = [
     path('edit_account/<str:pk>', EditAccountView.as_view(), name="edit_account"),
 
     path('apply_leave', LeaveCreateView.as_view(), name="apply_leave"),
+    path('manage_leaves', ManageLeaves.as_view(), name="manage_leaves"),
+    path('delete_leave/<str:pk>', DeleteLeaveView.as_view(), name="delete_leave"),
 ]

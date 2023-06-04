@@ -130,6 +130,8 @@ class Leave(models.Model):
     reason = models.ForeignKey(
         Reasons, on_delete=models.CASCADE, blank=True, null=True)
     dept_approval = models.BooleanField(default=False)
+    created = models.DateTimeField(
+        verbose_name='date_created', auto_now_add=True)
 
     def __str__(self):
         return f"{self.user} requested for a leave"
