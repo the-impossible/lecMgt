@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.shortcuts import reverse
 import uuid
+
 # Create your models here.
 
 
@@ -16,19 +17,6 @@ class Department(models.Model):
     class Meta:
         db_table = 'Department'
         verbose_name_plural = 'Departments'
-
-
-class UserTypes(models.Model):
-    type_id = models.UUIDField(
-        default=uuid.uuid4, primary_key=True, unique=True, editable=False)
-    user_Type = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return self.user_Type
-
-    class Meta:
-        db_table = 'User Type'
-        verbose_name_plural = 'User Types'
 
 
 class UserManager(BaseUserManager):
@@ -116,3 +104,36 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         db_table = 'Users'
         verbose_name_plural = 'Users'
+
+
+class Reasons(models.Model):
+    reason_id = models.UUIDField(
+        default=uuid.uuid4, primary_key=True, unique=True, editable=False)
+    reason_title = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.reason_title
+
+    class Meta:
+        db_table = 'Reasons'
+        verbose_name_plural = 'Reasons'
+
+
+class Leave(models.Model):
+    leave_id = models.UUIDField(
+        default=uuid.uuid4, primary_key=True, unique=True, editable=False)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=True, null=True)
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
+    details = models.TextField(blank=True, null=True)
+    reason = models.ForeignKey(
+        Reasons, on_delete=models.CASCADE, blank=True, null=True)
+    dept_approval = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user} requested for a leave"
+
+    class Meta:
+        db_table = 'Leave'
+        verbose_name_plural = 'Leave'
