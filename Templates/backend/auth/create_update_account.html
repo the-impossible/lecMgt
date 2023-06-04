@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% load static %}
-{% block title %}Create Account{% endblock title %}
+{% block title %}{{type}} Account{% endblock title %}
 
 {% block head %}{% include 'partials/auth_head.html' %}{% endblock head %}
 
@@ -22,11 +22,11 @@
             {% include 'partials/messages.html' %}
 
             <div class="page-header">
-              <h3 class="page-title"> Create Account</h3>
+              <h3 class="page-title"> {{type}} Account</h3>
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="{% url 'auth:create_account' %}">dashboard</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">create account</li>
+                  <li class="breadcrumb-item"><a href="{% url 'auth:dashboard' %}">dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">{{type}} account</li>
                 </ol>
               </nav>
             </div>
@@ -35,8 +35,8 @@
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Account Form</h4>
-                    <p class="card-description"> Fill the form below to create user account </p>
-                    <form class="forms-sample" method="POST">
+                    <p class="card-description"> Fill the form below to {{type|lower}} user account </p>
+                    <form class="forms-sample" method="POST" enctype="multipart/form-data">
                       {% csrf_token %}
                       {{ form|crispy }}
                       <button type="submit" class="btn btn-primary mr-2">Submit</button>

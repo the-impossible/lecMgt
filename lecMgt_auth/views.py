@@ -11,8 +11,11 @@ from lecMgt_auth.models import User
 from lecMgt_auth.forms import *
 
 # Create your views here.
-class DashboardView(LoginRequiredMixin,TemplateView):
+
+
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "backend/dashboard.html"
+
 
 class LoginView(View):
     def get(self, request):
@@ -54,15 +57,20 @@ class LogoutView(LoginRequiredMixin, View):
             request, 'You are successfully logged out, to continue login again')
         return redirect('auth:login')
 
+
 class CreateAccountPageView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = User
     form_class = AccountCreationForm
-    template_name = "backend/auth/create_account.html"
+    template_name = "backend/auth/create_update_account.html"
     success_message = "Account created successfully!"
 
     def get_success_url(self):
         return reverse("auth:create_account")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["type"] = 'Create'
+        return context
 
     def form_valid(self, form):
         user_type = form.cleaned_data.get('user_type')
@@ -81,6 +89,7 @@ class CreateAccountPageView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
 
         return form
 
+
 class ManageAccounts(LoginRequiredMixin, ListView):
     template_name = 'backend/auth/manage_accounts.html'
 
@@ -90,10 +99,53 @@ class ManageAccounts(LoginRequiredMixin, ListView):
     def get_success_url(self):
         return reverse("auth:manage_accounts")
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context["form"] = ScheduleTestForm
-    #     return context
+
+class EditAccountView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+    model = User
+    template_name = "backend/auth/create_update_account.html"
+    form_class = EditAccountCreationForm
+    success_message = 'Account Updated Successfully!'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["type"] = 'Update'
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super(EditAccountView, self).get_form_kwargs()
+        if hasattr(self, 'object'):
+            kwargs.update({'types': self.object})
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("auth:manage_accounts")
+
+    def form_valid(self, form):
+        user_type = form.cleaned_data.get('user_type')
+        pics = form.cleaned_data.get('pics')
+        print(f'CONFIRM: {pics}')
+
+        form.instance.is_central = False
+        form.instance.is_dean = False
+        form.instance.is_hod = False
+        form.instance.is_dept = False
+        form.instance.is_is_staff = False
+
+        if user_type == "1":
+            form.instance.is_central = True
+        elif user_type == "2":
+            form.instance.is_dean = True
+        elif user_type == "3":
+            form.instance.is_hod = True
+        elif user_type == "4":
+            form.instance.is_dept = True
+        elif user_type == "5":
+            form.instance.is_staff = True
+
+        form = super().form_valid(form)
+
+        return form
+
 
 class DeleteAccountView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = User

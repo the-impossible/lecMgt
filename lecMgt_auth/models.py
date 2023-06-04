@@ -18,6 +18,19 @@ class Department(models.Model):
         verbose_name_plural = 'Departments'
 
 
+class UserTypes(models.Model):
+    type_id = models.UUIDField(
+        default=uuid.uuid4, primary_key=True, unique=True, editable=False)
+    user_Type = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.user_Type
+
+    class Meta:
+        db_table = 'User Type'
+        verbose_name_plural = 'User Types'
+
+
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
 

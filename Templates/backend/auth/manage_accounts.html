@@ -55,7 +55,10 @@
                         {% for object in object_list %}
                         <tr>
                           <td class="py-1">
-                            <img src="{{ object.pics.url }}" width="60" alt="image" />
+                            <a href="{% url 'auth:edit_account' object.pk %}">
+                              <img src="{{ object.pics.url }}" width="60" alt="image" />
+                            </a>
+
                           </td>
                           <td> {{ object.name}} </td>
                           <td> {{ object.email}} </td>

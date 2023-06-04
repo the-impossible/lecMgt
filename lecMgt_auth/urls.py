@@ -11,4 +11,5 @@ urlpatterns = [
     path('create_account', CreateAccountPageView.as_view(), name="create_account"),
     path('manage_accounts', ManageAccounts.as_view(), name="manage_accounts"),
     path('delete_account/<str:pk>', DeleteAccountView.as_view(), name="delete_account"),
+    path('edit_account/<str:pk>', EditAccountView.as_view(), name="edit_account"),
 ]
