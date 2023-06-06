@@ -139,3 +139,21 @@ class Leave(models.Model):
     class Meta:
         db_table = 'Leave'
         verbose_name_plural = 'Leave'
+
+
+class Notice(models.Model):
+    notice_id = models.UUIDField(
+        default=uuid.uuid4, primary_key=True, unique=True, editable=False)
+    notice_title = models.CharField(max_length=50, unique=True)
+    notice_detail = models.TextField(blank=True, null=True)
+    posted_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=True, null=True)
+    created = models.DateTimeField(
+        verbose_name='date_created', auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.posted_by} posted a notice"
+
+    class Meta:
+        db_table = 'Notice'
+        verbose_name_plural = 'Notice'

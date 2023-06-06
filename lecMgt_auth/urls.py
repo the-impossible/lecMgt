@@ -19,4 +19,8 @@ urlpatterns = [
     path('edit_leave/<str:pk>', EditLeaveView.as_view(), name="edit_leave"),
 
     path('approve_leave/<str:leave_id>/<str:type>', ApproveDisapproveLeaveView.as_view(), name="approve_leave"),
+
+    path('create_notice', NoticeCreateView.as_view(), name="create_notice"),
+    path('manage_notice', ManageNotice.as_view(), name="manage_notice"),
+    path('edit_notice/<str:pk>', EditNoticeView.as_view(), name="edit_notice"),
 ]

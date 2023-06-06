@@ -157,3 +157,23 @@ class LeaveApplicationForm(forms.ModelForm):
     class Meta:
         model = Leave
         fields = ('reason', 'start_date', 'end_date', 'details')
+
+class NoticeForm(forms.ModelForm):
+
+    notice_title = forms.CharField(help_text='Leave notice_detail', widget=forms.TextInput(
+        attrs={
+            'class': 'form-control form-control-lg input-lg',
+        }
+    ))
+
+    notice_detail = forms.CharField(help_text='Leave notice_detail', widget=forms.Textarea(
+        attrs={
+            'class': 'form-control form-control-lg input-lg',
+            'rows': 3,
+        }
+    ))
+
+    class Meta:
+        model = Notice
+        fields = ('notice_title', 'notice_detail',)
+

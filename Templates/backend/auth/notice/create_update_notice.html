@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% load static %}
+{% block title %}{{type}} Notice{% endblock title %}
+
+{% block head %}{% include 'partials/auth_head.html' %}{% endblock head %}
+
+{% block body %}
+
+    <div class="container-scroller">
+
+      {% block nav %}{% include 'partials/auth_nav.html' %}{% endblock nav %}
+
+      <div class="container-fluid page-body-wrapper">
+
+        {% include 'partials/auth_sidebar.html' %}
+
+        <div class="main-panel">
+          <div class="content-wrapper">
+
+            {% include 'partials/messages.html' %}
+
+            <div class="page-header">
+              <h3 class="page-title"> {{type}} Notice</h3>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'auth:dashboard' %}">dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">{{type}} notice</li>
+                </ol>
+              </nav>
+            </div>
+            <div class="row">
+              <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Notice Form</h4>
+                    <p class="card-description"> Fill the form below to {{type|lower}} leave </p>
+                    <form class="forms-sample" method="POST" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      {{ form|crispy }}
+                      <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {% block footer %}{% include 'partials/auth_footer.html' %}{% endblock footer %}
+
+        </div>
+
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+
+    {% block script %} {% include 'partials/auth_script.html' %} {% endblock %}
+    {% include "partials/modal_logout.html" %}
+
+  {% endblock %}

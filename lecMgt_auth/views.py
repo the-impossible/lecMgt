@@ -171,6 +171,7 @@ class LeaveCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
         return form
 
+
 class ManageLeaves(LoginRequiredMixin, ListView):
     template_name = 'backend/auth/leave/manage_leave.html'
 
@@ -180,10 +181,12 @@ class ManageLeaves(LoginRequiredMixin, ListView):
     def get_success_url(self):
         return reverse("auth:manage_leaves")
 
+
 class DeleteLeaveView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Leave
     success_message = 'Deleted successfully!'
     success_url = reverse_lazy('auth:manage_leaves')
+
 
 class EditLeaveView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = Leave
@@ -199,6 +202,7 @@ class EditLeaveView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse("auth:manage_leaves")
 
+
 class ApproveDisapproveLeaveView(LoginRequiredMixin, View):
 
     def post(self, request, leave_id, type):
@@ -206,12 +210,56 @@ class ApproveDisapproveLeaveView(LoginRequiredMixin, View):
         if type == 'approve':
             leave.dept_approval = True
             messages.success(
-            request, 'Leave has been approved')
+                request, 'Leave has been approved')
         else:
             leave.dept_approval = False
             messages.success(
-            request, 'Leave has been disapproved')
+                request, 'Leave has been disapproved')
 
         leave.save()
         return redirect('auth:manage_leaves')
+
+
+class NoticeCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Notice
+    form_class = NoticeForm
+    template_name = "backend/auth/notice/create_update_notice.html"
+    success_message = "Notice posted successfully!"
+
+    def get_success_url(self):
+        return reverse("auth:create_notice")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["type"] = 'Create'
+        return context
+
+    def form_valid(self, form):
+        form.instance.posted_by = self.request.user
+        form = super().form_valid(form)
+
+        return form
+
+class ManageNotice(LoginRequiredMixin, ListView):
+    template_name = 'backend/auth/notice/manage_notice.html'
+
+    def get_queryset(self):
+        return Notice.objects.all().order_by('-created')
+
+    def get_success_url(self):
+        return reverse("auth:manage_notice")
+
+class EditNoticeView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+    model = Notice
+    template_name = "backend/auth/notice/create_update_notice.html"
+    form_class = NoticeForm
+    success_message = 'Notice Updated Successfully!'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["type"] = 'Update'
+        return context
+
+    def get_success_url(self):
+        return reverse("auth:manage_notice")
 

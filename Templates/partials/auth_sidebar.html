@@ -43,8 +43,8 @@
       </a>
       <div class="collapse" id="ui-notice">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">Create Notice</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/dropdowns.html">Manage Notice</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'auth:create_notice' %}">Create Notice</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'auth:manage_notice' %}">Manage Notice</a></li>
         </ul>
       </div>
     </li>
@@ -90,14 +90,12 @@
     </li>
 
     <li class="nav-item">
-      <a class="nav-link" href="pages/icons/mdi.html">
+      <a class="nav-link" href="{% url 'auth:manage_notice' %}">
         <span class="icon-bg"><i class="mdi mdi-chart-bar menu-icon"></i></span>
         <span class="menu-title">View Notice</span>
       </a>
     </li>
-
     {% endif %}
-
 
     <li class="nav-item sidebar-user-actions">
       <div class="user-details">
