@@ -23,4 +23,6 @@ urlpatterns = [
     path('create_notice', NoticeCreateView.as_view(), name="create_notice"),
     path('manage_notice', ManageNotice.as_view(), name="manage_notice"),
     path('edit_notice/<str:pk>', EditNoticeView.as_view(), name="edit_notice"),
+
+    path('manage_lecturers', ManageLecturerAccounts.as_view(), name="manage_lecturers"),
 ]

@@ -263,3 +263,12 @@ class EditNoticeView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse("auth:manage_notice")
 
+class ManageLecturerAccounts(LoginRequiredMixin, ListView):
+    template_name = 'backend/auth/manage_accounts.html'
+
+    def get_queryset(self):
+        return User.objects.filter(department=self.request.user.department, is_dept=False).order_by('-date_joined')
+
+    def get_success_url(self):
+        return reverse("auth:manage_accounts")
+
