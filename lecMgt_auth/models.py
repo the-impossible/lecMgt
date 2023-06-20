@@ -158,10 +158,12 @@ class Notice(models.Model):
         db_table = 'Notice'
         verbose_name_plural = 'Notice'
 
+
 class Qualification(models.Model):
     qua_id = models.UUIDField(
         default=uuid.uuid4, primary_key=True, unique=True, editable=False)
     qua_title = models.CharField(max_length=50, unique=True)
+    qua_abbr = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return f"{self.qua_title}"
@@ -170,14 +172,18 @@ class Qualification(models.Model):
         db_table = 'Qualification'
         verbose_name_plural = 'Qualification'
 
+
 class LecturerProfile(models.Model):
     profile_id = models.UUIDField(
         default=uuid.uuid4, primary_key=True, unique=True, editable=False)
-    user_id = models.OneToOneField('User', on_delete=models.CASCADE, blank=True, null=True)
+    user_id = models.OneToOneField(
+        'User', on_delete=models.CASCADE, blank=True, null=True)
     lec_qua = models.ForeignKey(
         Qualification, on_delete=models.CASCADE, blank=True, null=True)
     grade_point = models.IntegerField(default=8)
-    position = models.OneToOneField('Positions', on_delete=models.CASCADE, blank=True, null=True)
+    employment_date = models.DateField()
+    # position = models.OneToOneField(
+    #     'Positions', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user_id.name} profile"
@@ -186,10 +192,12 @@ class LecturerProfile(models.Model):
         db_table = 'Lecturer Profile'
         verbose_name_plural = 'Lecturer Profile'
 
+
 class Positions(models.Model):
     pos_id = models.UUIDField(
         default=uuid.uuid4, primary_key=True, unique=True, editable=False)
     position_title = models.CharField(max_length=50, unique=True)
+    position_grade = models.IntegerField(default=8)
 
     def __str__(self):
         return f"{self.position_title}"
@@ -198,11 +206,14 @@ class Positions(models.Model):
         db_table = 'Positions'
         verbose_name_plural = 'Positions'
 
+
 class Promotion(models.Model):
     pro_id = models.UUIDField(
         default=uuid.uuid4, primary_key=True, unique=True, editable=False)
-    lecturer = models.ForeignKey('LecturerProfile', on_delete=models.CASCADE, blank=True, null=True)
-    position = models.ForeignKey('Positions', on_delete=models.CASCADE, blank=True, null=True)
+    lecturer = models.ForeignKey(
+        'LecturerProfile', on_delete=models.CASCADE, blank=True, null=True)
+    position = models.ForeignKey(
+        'Positions', on_delete=models.CASCADE, blank=True, null=True)
     dept_approval = models.BooleanField(default=False)
     central_approval = models.BooleanField(default=False)
     dean_approval = models.BooleanField(default=False)
