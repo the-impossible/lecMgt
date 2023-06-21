@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.shortcuts import reverse
 import uuid
+from django.utils import timezone
 
 # Create your models here.
 
@@ -183,7 +184,8 @@ class LecturerProfile(models.Model):
     position = models.ForeignKey(
         'Positions', on_delete=models.CASCADE, blank=True, null=True)
     grade_point = models.IntegerField(default=8)
-    employment_date = models.DateField()
+    employment_date = models.DateField(
+        default=timezone.now, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user_id.name} profile"

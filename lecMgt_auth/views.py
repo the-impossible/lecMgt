@@ -84,6 +84,8 @@ class CreateAccountPageView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
             form.instance.is_dept = True
         elif user_type == "5":
             form.instance.is_staff = True
+        elif user_type == "6":
+            LecturerProfile.objects.create(user_id=form.instance.user_id)
 
         form = super().form_valid(form)
 
@@ -366,6 +368,9 @@ class ManagePromotions(LoginRequiredMixin, ListView):
 
         if self.request.user.is_central:
             return Promotion.objects.filter(central_approval=False).order_by('-date_applied')
+
+        if self.request.user.is_staff:
+            return Promotion.objects.all().order_by('-date_applied')
 
         user = User.objects.get(email=self.request.user)
         profile = LecturerProfile.objects.get(user_id=user.user_id)
