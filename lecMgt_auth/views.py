@@ -240,6 +240,7 @@ class NoticeCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
         return form
 
+
 class ManageNotice(LoginRequiredMixin, ListView):
     template_name = 'backend/auth/notice/manage_notice.html'
 
@@ -248,6 +249,7 @@ class ManageNotice(LoginRequiredMixin, ListView):
 
     def get_success_url(self):
         return reverse("auth:manage_notice")
+
 
 class EditNoticeView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = Notice
@@ -263,6 +265,7 @@ class EditNoticeView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse("auth:manage_notice")
 
+
 class ManageLecturerAccounts(LoginRequiredMixin, ListView):
     template_name = 'backend/auth/manage_accounts.html'
 
@@ -272,3 +275,137 @@ class ManageLecturerAccounts(LoginRequiredMixin, ListView):
     def get_success_url(self):
         return reverse("auth:manage_accounts")
 
+
+class EditLecturerProfileView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+    model = LecturerProfile
+    template_name = "backend/auth/update_lecturer_profile.html"
+    form_class = UpdateLecturerProfileForm
+    success_message = 'Profile updated Updated Successfully!'
+
+    def get_object(self):
+        user = User.objects.get(user_id=self.kwargs['pk'])
+        profile = LecturerProfile.objects.get(user_id=user.user_id)
+
+        return profile
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["type"] = 'Update'
+        return context
+
+    def get_success_url(self):
+        return reverse("auth:manage_lecturers")
+
+
+class ApplyPromotionView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Promotion
+    form_class = PromotionForm
+    template_name = "backend/auth/promotion/apply_promotion.html"
+    success_message = "Promotion application successfully!"
+
+    def get_success_url(self):
+        return reverse("auth:manage_promotion")
+
+    def form_valid(self, form):
+        # Get lecturer details
+        user = User.objects.get(email=self.request.user)
+        profile = LecturerProfile.objects.get(user_id=user.user_id)
+
+        if profile.position.position_grade > form.instance.position.position_grade:
+            messages.error(
+                self.request, "Current position is higher than applying position")
+            form = super().form_invalid(form)
+            return form
+
+        else:
+
+            # get applying position grade
+            if profile.position.position_title == form.instance.position.position_title:
+
+                messages.error(self.request, "Already at current position")
+                form = super().form_invalid(form)
+
+                return form
+
+            elif profile.grade_point >= form.instance.position.position_grade:
+                form.instance.lecturer = profile
+
+                promotion = Promotion.objects.filter(
+                    lecturer=profile, is_pending=True).exists()
+
+                if promotion:
+                    messages.error(
+                        self.request, "Your have a pending promotion application")
+                    form = super().form_invalid(form)
+
+                    return form
+
+                form = super().form_valid(form)
+                return form
+
+            else:
+                messages.error(
+                    self.request, "Your grade point is lesser than the position grade point")
+                form = super().form_invalid(form)
+
+                return form
+
+
+class ManagePromotions(LoginRequiredMixin, ListView):
+    template_name = 'backend/auth/promotion/manage_promotion.html'
+
+    def get_queryset(self):
+        if self.request.user.is_dept:
+            return Promotion.objects.filter(dept_approval=False).order_by('-date_applied')
+
+        if self.request.user.is_hod:
+            return Promotion.objects.filter(hod_approval=False).order_by('-date_applied')
+
+        if self.request.user.is_dean:
+            return Promotion.objects.filter(dean_approval=False).order_by('-date_applied')
+
+        if self.request.user.is_central:
+            return Promotion.objects.filter(central_approval=False).order_by('-date_applied')
+
+        user = User.objects.get(email=self.request.user)
+        profile = LecturerProfile.objects.get(user_id=user.user_id)
+        return Promotion.objects.filter(lecturer=profile).order_by('-date_applied')
+
+    def get_success_url(self):
+        return reverse("auth:manage_promotion")
+
+
+class DeletePromotionView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = Promotion
+    success_message = 'Deleted successfully!'
+    success_url = reverse_lazy('auth:manage_promotion')
+
+
+class ApprovePromotionView(LoginRequiredMixin, View):
+
+    def get(self, request, pro_id):
+        pro = Promotion.objects.get(pro_id=pro_id)
+        if request.user.is_dept:
+            pro.dept_approval = True
+        elif request.user.is_hod:
+            pro.hod_approval = True
+        elif request.user.is_dean:
+            pro.dean_approval = True
+        elif request.user.is_central:
+            pro.central_approval = True
+            pro.is_pending = False
+            # upgrade lecturer
+            lec = LecturerProfile.objects.get(
+                profile_id=pro.lecturer.profile_id)
+            lec.position = pro.position
+            lec.save()
+        else:
+            messages.error(
+                request, 'You are not authorized')
+            return redirect('auth:manage_promotion')
+
+        messages.success(
+            request, 'promotion has been approved')
+        pro.save()
+
+        return redirect('auth:manage_promotion')

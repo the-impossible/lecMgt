@@ -180,10 +180,10 @@ class LecturerProfile(models.Model):
         'User', on_delete=models.CASCADE, blank=True, null=True)
     lec_qua = models.ForeignKey(
         Qualification, on_delete=models.CASCADE, blank=True, null=True)
+    position = models.ForeignKey(
+        'Positions', on_delete=models.CASCADE, blank=True, null=True)
     grade_point = models.IntegerField(default=8)
     employment_date = models.DateField()
-    # position = models.OneToOneField(
-    #     'Positions', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user_id.name} profile"
@@ -218,6 +218,8 @@ class Promotion(models.Model):
     central_approval = models.BooleanField(default=False)
     dean_approval = models.BooleanField(default=False)
     hod_approval = models.BooleanField(default=False)
+    is_pending = models.BooleanField(default=True)
+    date_applied = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.lecturer.user_id.name} is requesting for promotion"

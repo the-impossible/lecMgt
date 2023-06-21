@@ -125,6 +125,7 @@ class EditAccountCreationForm(forms.ModelForm):
         model = User
         fields = ('email', 'name', 'user_type', 'department', 'pics')
 
+
 class LeaveApplicationForm(forms.ModelForm):
 
     details = forms.CharField(help_text='Leave Details', widget=forms.Textarea(
@@ -158,6 +159,7 @@ class LeaveApplicationForm(forms.ModelForm):
         model = Leave
         fields = ('reason', 'start_date', 'end_date', 'details')
 
+
 class NoticeForm(forms.ModelForm):
 
     notice_title = forms.CharField(help_text='Leave notice_detail', widget=forms.TextInput(
@@ -177,3 +179,47 @@ class NoticeForm(forms.ModelForm):
         model = Notice
         fields = ('notice_title', 'notice_detail',)
 
+
+class UpdateLecturerProfileForm(forms.ModelForm):
+
+    employment_date = forms.DateField(help_text='Employment date', widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'type': 'date',
+        }
+    ))
+
+    grade_point = forms.CharField(help_text='Enter lecturer grade point', widget=forms.TextInput(
+        attrs={
+            'class': 'form-control form-control-lg input-lg',
+        }
+    ))
+
+    position = forms.ModelChoiceField(queryset=Positions.objects.all(), empty_label="(Select Position)", required=True, help_text="Select applying position",  widget=forms.Select(
+        attrs={
+            'class': 'form-control',
+        }
+    ))
+
+    lec_qua = forms.ModelChoiceField(queryset=Qualification.objects.all(), empty_label="(Select Qualification)", required=True, help_text="Select qualification",  widget=forms.Select(
+        attrs={
+            'class': 'form-control',
+        }
+    ))
+
+    class Meta:
+        model = LecturerProfile
+        fields = ('lec_qua', 'grade_point', 'employment_date', 'position')
+
+
+class PromotionForm(forms.ModelForm):
+
+    position = forms.ModelChoiceField(queryset=Positions.objects.all(), empty_label="(Select Position)", required=True, help_text="Select applying position",  widget=forms.Select(
+        attrs={
+            'class': 'form-control',
+        }
+    ))
+
+    class Meta:
+        model = Promotion
+        fields = ('position',)

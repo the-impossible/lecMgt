@@ -61,6 +61,20 @@
         <span class="menu-title">Manage Lecturers</span>
       </a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'auth:manage_promotion' %}">
+        <span class="icon-bg"><i class="mdi mdi-chart-bar menu-icon"></i></span>
+        <span class="menu-title">Approve Promotion</span>
+      </a>
+    </li>
+
+    {% elif request.user.is_hod or request.user.is_dean or request.user.is_central %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'auth:manage_promotion' %}">
+        <span class="icon-bg"><i class="mdi mdi-chart-bar menu-icon"></i></span>
+        <span class="menu-title">Approve Promotion</span>
+      </a>
+    </li>
 
     {% else %}
 
@@ -74,8 +88,8 @@
       </a>
       <div class="collapse" id="ui-promotion">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">Apply Promotion</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/dropdowns.html">Manage Promotion</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'auth:apply_promotion' %}">Apply Promotion</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{% url 'auth:manage_promotion' %}">Manage Promotion</a></li>
         </ul>
       </div>
     </li>

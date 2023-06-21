@@ -1,0 +1,13 @@
+{% if object.is_staff %}
+    Status
+{% elif object.is_central %}
+Status
+    {% elif object.is_dean %}
+    Status
+    {% elif object.is_hod %}
+    Status
+    {% elif object.is_dept %}
+    Status
+    {% else %}
+Action
+{% endif %}
