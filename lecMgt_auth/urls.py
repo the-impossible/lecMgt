@@ -10,7 +10,8 @@ urlpatterns = [
 
     path('create_account', CreateAccountPageView.as_view(), name="create_account"),
     path('manage_accounts', ManageAccounts.as_view(), name="manage_accounts"),
-    path('delete_account/<str:pk>', DeleteAccountView.as_view(), name="delete_account"),
+    path('delete_account/<str:pk>',
+         DeleteAccountView.as_view(), name="delete_account"),
     path('edit_account/<str:pk>', EditAccountView.as_view(), name="edit_account"),
 
     path('apply_leave', LeaveCreateView.as_view(), name="apply_leave"),
@@ -18,18 +19,26 @@ urlpatterns = [
     path('delete_leave/<str:pk>', DeleteLeaveView.as_view(), name="delete_leave"),
     path('edit_leave/<str:pk>', EditLeaveView.as_view(), name="edit_leave"),
 
-    path('approve_leave/<str:leave_id>/<str:type>', ApproveDisapproveLeaveView.as_view(), name="approve_leave"),
+    path('approve_leave/<str:leave_id>/<str:type>',
+         ApproveDisapproveLeaveView.as_view(), name="approve_leave"),
 
     path('create_notice', NoticeCreateView.as_view(), name="create_notice"),
     path('manage_notice', ManageNotice.as_view(), name="manage_notice"),
     path('edit_notice/<str:pk>', EditNoticeView.as_view(), name="edit_notice"),
 
-    path('manage_lecturers', ManageLecturerAccounts.as_view(), name="manage_lecturers"),
-    path('edit_lecturer/<str:pk>', EditLecturerProfileView.as_view(), name="edit_lecturer"),
+    path('manage_lecturers', ManageLecturerAccounts.as_view(),
+         name="manage_lecturers"),
+    path('edit_lecturer/<str:pk>',
+         EditLecturerProfileView.as_view(), name="edit_lecturer"),
 
     path('apply_promotion', ApplyPromotionView.as_view(), name="apply_promotion"),
     path('manage_promotion', ManagePromotions.as_view(), name="manage_promotion"),
-    path('delete_promotion/<str:pk>', DeletePromotionView.as_view(), name="delete_promotion"),
-    path('approve_pro/<str:pro_id>', ApprovePromotionView.as_view(), name="approve_pro"),
+    path('delete_promotion/<str:pk>',
+         DeletePromotionView.as_view(), name="delete_promotion"),
+    path('approve_pro/<str:pro_id>',
+         ApprovePromotionView.as_view(), name="approve_pro"),
+
+    path('profile/<str:pk>', ProfileView.as_view(), name="profile"),
+    path('password', ChangePassword.as_view(), name="password"),
 
 ]

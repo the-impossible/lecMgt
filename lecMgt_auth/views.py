@@ -9,6 +9,7 @@ from django.views import View
 from django.urls import reverse_lazy
 from lecMgt_auth.models import User
 from lecMgt_auth.forms import *
+from django.contrib.auth.hashers import check_password
 
 # Create your views here.
 
@@ -417,3 +418,63 @@ class ApprovePromotionView(LoginRequiredMixin, View):
         pro.save()
 
         return redirect('auth:manage_promotion')
+
+
+class ProfileView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+    model = User
+    template_name = "backend/auth/profile.html"
+    form_class = ProfileForm
+    success_message = 'Account Updated Successfully!'
+
+    def get_success_url(self):
+        return reverse("auth:profile", kwargs={'pk': self.request.user.user_id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pass'] = ChangePassForm()
+        try:
+            lec = LecturerProfile.objects.get(user_id=self.request.user)
+            context["object"] = self.request.user
+            context["lec"] = lec
+        except:
+            context["object"] = self.request.user
+
+        return context
+
+
+class ChangePassword(View):
+
+    passForm = ChangePassForm
+
+    def post(self, request):
+
+        form = self.passForm(request.POST)
+
+        if form.is_valid():
+            old_pass = form.cleaned_data.get('old_pass')
+            user_pass = request.user.password
+
+            if check_password(old_pass, user_pass):
+                user = User.objects.get(user_id=request.user.user_id)
+                user.password = make_password(
+                    form.cleaned_data.get('new_pass'))
+                user.save()
+                messages.success(
+                    request, "Password is now updated, you can login to continue!")
+                return redirect("auth:login")
+            messages.error(request, "Incorrect current password!")
+
+        messages.error(request, f"{form.errors.as_text()}")
+        context = {}
+        context["pass"] = form
+        context["form"] = ProfileForm
+        context["pk"] = self.request.user.user_id
+
+        try:
+            lec = LecturerProfile.objects.get(user_id=self.request.user)
+            context["object"] = self.request.user
+            context["lec"] = lec
+        except:
+            context["object"] = self.request.user
+
+        return render(request, "backend/auth/profile.html", context=context)

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% load static %}
+{% block title %}{{type}} Profile{% endblock title %}
+
+{% block head %}{% include 'partials/auth_head.html' %}{% endblock head %}
+
+{% block body %}
+
+    <div class="container-scroller">
+
+      {% block nav %}{% include 'partials/auth_nav.html' %}{% endblock nav %}
+
+      <div class="container-fluid page-body-wrapper">
+
+        {% include 'partials/auth_sidebar.html' %}
+
+        <div class="main-panel">
+          <div class="content-wrapper">
+
+            {% include 'partials/messages.html' %}
+
+            <div class="page-header">
+              <h3 class="page-title"> {{type}} Profile</h3>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'auth:dashboard' %}">dashboard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">{{type}} profile</li>
+                </ol>
+              </nav>
+            </div>
+            <div class="row">
+              <div class="col-md-6 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Profile Form</h4>
+                    <p class="card-description"> Fill the form below to update your profile </p>
+                    <form class="forms-sample" method="POST" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      {{ form|crispy }}
+                      <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Profile Details</h4>
+                    <p class="card-description"> Information about your profile</p>
+                    <div class="p-3 text-center">
+                      <img src="{{ request.user.pics.url }}" width="120" alt="image">
+                    </div>
+                    {% if request.user.is_dept or request.user.is_hod or request.user.is_dean or request.user.is_central %}
+                    <p><b>Name: </b> {{ object.name}}</p>
+                    <p><b>Department: </b> {{ object.department }} </p>
+                    <hr>
+                    {% else %}
+                    <p><b>Name: </b> {{ object.name}}</p>
+                    <p><b>Department: </b> {{ object.department }} </p>
+                    <hr>
+                    <p><b>Current Position: </b> {{ lec.position.position_title }} </p>
+                    <p><b>Current Grade: </b> {{ lec.grade_point }} </p>
+                    <p><b>Current Qualifcation: </b> {{ lec.lec_qua.qua_title }} {{ lec.lec_qua.qua_abbr }}</p>
+                    <p><b>Employment Date: </b> {{ lec.employment_date }} </p>
+                    <hr>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+{% comment %}
+            <div class="row">
+              <div class="col-md-6 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Change Password</h4>
+                    <p class="card-description"> Fill the form below to change your Password </p>
+                    <form class="forms-sample" method="POST" action="{% url 'auth:password' %}" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      {{ pass|crispy }}
+                      <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    </form>
+
+                  </div>
+                </div>
+              </div>
+            </div> {% endcomment %}
+          </div>
+
+          {% block footer %}{% include 'partials/auth_footer.html' %}{% endblock footer %}
+
+        </div>
+
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+
+    {% block script %} {% include 'partials/auth_script.html' %} {% endblock %}
+    {% include "partials/modal_logout.html" %}
+
+  {% endblock %}

@@ -223,3 +223,83 @@ class PromotionForm(forms.ModelForm):
     class Meta:
         model = Promotion
         fields = ('position',)
+
+
+class ProfileForm(forms.ModelForm):
+
+    email = forms.CharField(help_text='Enter email', widget=forms.TextInput(
+        attrs={
+            'class': 'form-control form-control-lg input-lg',
+            'type': 'email',
+        }
+    ))
+
+    name = forms.CharField(help_text='Enter full name', widget=forms.TextInput(
+        attrs={
+            'class': 'form-control form-control-lg input-lg',
+        }
+    ))
+
+    pics = forms.ImageField(required=False, help_text="account profile picture", widget=forms.FileInput(
+        attrs={
+            'class': 'form-control',
+            'type': 'file',
+            'accept': 'image/png, image/jpeg'
+        }
+    ))
+
+    class Meta:
+        model = User
+        fields = ('email', 'name', 'pics',)
+
+
+class ChangePassForm(forms.ModelForm):
+    new_pass = forms.CharField(help_text='Enter New Password', widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'type': 'password',
+            'name': 'new_pass',
+        }
+    ))
+
+    confirm_pass = forms.CharField(help_text='Confirm New Password', widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'type': 'password',
+            'name': 'confirm_pass',
+        }
+    ))
+
+    password = forms.CharField(help_text='Current Password', required=False, widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'type': 'password',
+            'name': 'old_pass',
+        }
+    ))
+
+    def clean_confirm_pass(self):
+        new_pass = self.cleaned_data.get('new_pass')
+        confirm_pass = self.cleaned_data.get('confirm_pass')
+        if new_pass != confirm_pass:
+            raise forms.ValidationError(
+                "new_pass and confirm password doesn't match!")
+
+        if len(new_pass) < 6:
+            raise forms.ValidationError(
+                "Password should be at least 6 characters")
+
+        return confirm_pass
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data.get('new_pass'))
+
+        if commit:
+            user.save()
+
+        return user
+
+    class Meta:
+        model = User
+        fields = ('password',)
