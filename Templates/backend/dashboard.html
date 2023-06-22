@@ -29,42 +29,231 @@
             <div class="col-md-12">
               <div class="d-sm-flex justify-content-between align-items-center transaparent-tab-border {">
                 <div class="row">
+
+
+                  {% if request.user.is_staff %}
+
                   <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
                     <div class="card">
                       <div class="card-body text-center">
-                        <h2 class="mb-4 text-dark font-weight-bold">932.00</h2>
-                        <div class="dashboard-progress dashboard-progress-1 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-lightbulb icon-md absolute-center text-dark"></i></div>
-                        <p class="mt-4 mb-0">Completed</p>
+                        <h2 class="mb-4 text-dark font-weight-bold">{{ lec }}</h2>
+                        <div class="dashboard-progress dashboard-progress-1 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-account-circle icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. of Lecturer</p>
                       </div>
                     </div>
                   </div>
+
                   <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
                     <div class="card">
                       <div class="card-body text-center">
-                        <h2 class="mb-4 text-dark font-weight-bold">756,00</h2>
-                        <div class="dashboard-progress dashboard-progress-2 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-account-circle icon-md absolute-center text-dark"></i></div>
-                        <p class="mt-4 mb-0">Increased since yesterday</p>
+                        <h2 class="mb-4 text-dark font-weight-bold">{{dept}}</h2>
+                        <div class="dashboard-progress dashboard-progress-2 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-cube icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. of Department</p>
                       </div>
                     </div>
                   </div>
+
                   <div class="col-xl-3  col-lg-6 col-sm-6 grid-margin stretch-card">
                     <div class="card">
                       <div class="card-body text-center">
-                        <h2 class="mb-4 text-dark font-weight-bold">100,38</h2>
-                        <div class="dashboard-progress dashboard-progress-3 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-eye icon-md absolute-center text-dark"></i></div>
-                        <p class="mt-4 mb-0">Increased since yesterday</p>
+                        <h2 class="mb-4 text-dark font-weight-bold">{{ pro }}</h2>
+                        <div class="dashboard-progress dashboard-progress-3 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-chart-bar icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">Total promotion application</p>
                       </div>
                     </div>
                   </div>
+
                   <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
                     <div class="card">
                       <div class="card-body text-center">
-                        <h2 class="mb-4 text-dark font-weight-bold">4250k</h2>
-                        <div class="dashboard-progress dashboard-progress-4 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-cube icon-md absolute-center text-dark"></i></div>
-                        <p class="mt-4 mb-0">Decreased since yesterday</p>
+                        <h2 class="mb-4 text-dark font-weight-bold">{{users}}</h2>
+                        <div class="dashboard-progress dashboard-progress-4 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-account-circle icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">Total System Users</p>
                       </div>
                     </div>
                   </div>
+
+                  {% elif request.user.is_dept %}
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{ lec }}</h2>
+                        <div class="dashboard-progress dashboard-progress-1 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-account-circle icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. of Lecturer</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{notice}}</h2>
+                        <div class="dashboard-progress dashboard-progress-2 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-cube icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. Applied Notice</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3  col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{ pro }}</h2>
+                        <div class="dashboard-progress dashboard-progress-3 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-chart-bar icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">Total approved promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{leaves}}</h2>
+                        <div class="dashboard-progress dashboard-progress-4 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-chart-bar icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">Total Approved Leaves</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {% elif request.user.is_hod %}
+
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{a_pro}}</h2>
+                        <div class="dashboard-progress dashboard-progress-2 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-cube icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. of approved promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{d_pro}}</h2>
+                        <div class="dashboard-progress dashboard-progress-4 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-chart-bar icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. of disapproved promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3  col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{ t_pro }}</h2>
+                        <div class="dashboard-progress dashboard-progress-3 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-chart-bar icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">Total approved promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {% elif request.user.is_dean %}
+
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{a_pro}}</h2>
+                        <div class="dashboard-progress dashboard-progress-2 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-cube icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. of approved promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{d_pro}}</h2>
+                        <div class="dashboard-progress dashboard-progress-4 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-chart-bar icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. of disapproved promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3  col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{ t_pro }}</h2>
+                        <div class="dashboard-progress dashboard-progress-3 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-chart-bar icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">Total approved promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {% elif request.user.is_central %}
+
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{a_pro}}</h2>
+                        <div class="dashboard-progress dashboard-progress-2 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-cube icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. of approved promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{d_pro}}</h2>
+                        <div class="dashboard-progress dashboard-progress-4 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-chart-bar icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. of disapproved promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3  col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{ t_pro }}</h2>
+                        <div class="dashboard-progress dashboard-progress-3 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-chart-bar icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">Total approved promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {% else %}
+
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{ a_leave }}</h2>
+                        <div class="dashboard-progress dashboard-progress-1 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-account-circle icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. of approved leaves</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{d_leave}}</h2>
+                        <div class="dashboard-progress dashboard-progress-2 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-cube icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">No. of disapproved leaves</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3  col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{ a_pro }}</h2>
+                        <div class="dashboard-progress dashboard-progress-3 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-chart-bar icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">Total approved promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-6 col-sm-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body text-center">
+                        <h2 class="mb-4 text-dark font-weight-bold">{{p_pro}}</h2>
+                        <div class="dashboard-progress dashboard-progress-4 d-flex align-items-center justify-content-center item-parent"><i class="mdi mdi-chart-bar icon-md absolute-center text-dark"></i></div>
+                        <p class="mt-4 mb-0">Total Pending promotion application</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {% endif %}
+
                 </div>
               </div>
             </div>

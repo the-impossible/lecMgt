@@ -149,6 +149,8 @@ class Notice(models.Model):
     notice_detail = models.TextField(blank=True, null=True)
     posted_by = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=True, null=True)
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, blank=True, null=True)
     created = models.DateTimeField(
         verbose_name='date_created', auto_now_add=True)
 

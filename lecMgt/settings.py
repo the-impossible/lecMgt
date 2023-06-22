@@ -71,6 +71,7 @@ TEMPLATES = [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
+                "lecMgt_auth.context_processors.dashboard",
                 "django.contrib.messages.context_processors.messages",
             ],
         },

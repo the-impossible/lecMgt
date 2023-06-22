@@ -85,7 +85,8 @@ class CreateAccountPageView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
         elif user_type == "5":
             form.instance.is_staff = True
         elif user_type == "6":
-            LecturerProfile.objects.create(user_id=form.instance.user_id)
+            self.object = form.save()
+            LecturerProfile.objects.create(user_id=self.object)
 
         form = super().form_valid(form)
 
@@ -238,6 +239,8 @@ class NoticeCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.posted_by = self.request.user
+        form.instance.department = Department.objects.get(
+            dept_id=self.request.user.department.dept_id)
         form = super().form_valid(form)
 
         return form
@@ -247,7 +250,7 @@ class ManageNotice(LoginRequiredMixin, ListView):
     template_name = 'backend/auth/notice/manage_notice.html'
 
     def get_queryset(self):
-        return Notice.objects.all().order_by('-created')
+        return Notice.objects.filter(department=self.request.user.department).order_by('-created')
 
     def get_success_url(self):
         return reverse("auth:manage_notice")
