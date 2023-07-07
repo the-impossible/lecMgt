@@ -56,10 +56,12 @@
                       </thead>
                       <tbody>
 
+                        {% if object_list %}
+
                         {% for object in object_list %}
                         <tr>
                           <td class="py-1">
-                            <a  {% if not request.user.is_dept %} href="{% url 'auth:edit_leave' object.pk %}"
+                            <a  {% if request.user ==  object.user %} href="{% url 'auth:edit_leave' object.pk %}"
                             {% endif %}>
                               <img src="{{ object.user.pics.url }}" width="60" alt="image" />
                             </a>
@@ -74,7 +76,12 @@
                           </td>
                           <td>
                             <label class="badge badge-primary">
-                              {{ object.dept_approval}}
+
+                              {% if  object.dept_approval %}
+                                approved
+                              {% else %}
+                              disapproved
+                              {% endif %}
                             </label>
                           </td>
                           <td>
@@ -159,6 +166,20 @@
                         </tr>
 
                         {% endfor %}
+
+                        {% else %}
+                        <tr>
+                          <td colspan="12">
+                            <div class="jumbotron text-center p-5">
+                              <!-- illustration can be used here too -->
+                              <p style="font-size: 5em;">📂</p> <br>
+                              <p style="font-size: 2em; margin-top: -40px;">No Record Here!</p>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {% endif %}
+
 
                       </tbody>
                     </table>

@@ -145,7 +145,7 @@ class Leave(models.Model):
 class Notice(models.Model):
     notice_id = models.UUIDField(
         default=uuid.uuid4, primary_key=True, unique=True, editable=False)
-    notice_title = models.CharField(max_length=50, unique=True)
+    notice_title = models.CharField(max_length=50,)
     notice_detail = models.TextField(blank=True, null=True)
     posted_by = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=True, null=True)
@@ -222,6 +222,12 @@ class Promotion(models.Model):
     central_approval = models.BooleanField(default=False)
     dean_approval = models.BooleanField(default=False)
     hod_approval = models.BooleanField(default=False)
+
+    dept_disapproval_reason = models.TextField(blank=True, null=True)
+    central_disapproval_reason = models.TextField(blank=True, null=True)
+    dean_disapproval_reason = models.TextField(blank=True, null=True)
+    hod_disapproval_reason = models.TextField(blank=True, null=True)
+
     is_pending = models.BooleanField(default=True)
     date_applied = models.DateTimeField(auto_now=True)
 

@@ -40,14 +40,19 @@
               <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    {% if request.user.is_dept or request.user.is_central or request.user.is_dean or request.user.is_hod %}
+
+                    {% if request.user.is_staff %}
+                    <h4 class="card-title">All applications</h4>
+                    <p class="card-description"> The record below contains Lecturer applying for promotion</p>
+
+                    {% elif request.user.is_dept or request.user.is_central or request.user.is_dean or request.user.is_hod %}
                     <h4 class="card-title">Applications for your review and approval</h4>
                     <p class="card-description"> The record below contains Lecturer applying for promotion</p>
                     {% else %}
                     <h4 class="card-title">My Promotion Application</h4>
                     <p class="card-description"> The record below contains your applied promotion</p>
                     {% endif %}
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover table-responsive">
                       <thead>
                         <tr>
                           <th> Lecturer </th>
@@ -59,17 +64,18 @@
                           {% else %}
 
                           <th> Dept Admin </th>
-                          <th> HOD </th>
+                          <th class="text-center"> HOD </th>
                           <th> Dean </th>
                           <th> Central Admin </th>
                           {% endif %}
-                          <th> {% include 'partials/approve.html' %} </th>
+                          <th class="text-center"> {% include 'partials/approve.html' %} </th>
 
                         </tr>
                       </thead>
                       <tbody>
 
                         {% for object in object_list %}
+
                           <td> {{ object.lecturer.user_id.name}} </td>
                           <td> {{ object.position.position_title}} </td>
                           <td class="text-center"> {{ object.lecturer.grade_point}} </td>
@@ -78,33 +84,117 @@
 
                           {% else %}
                           <td class="text-center">
+
+                            {% if object.dept_approval %}
                             <label class="badge badge-info">
-                              {{ object.dept_approval}}
+                              approved
                             </label>
+                            {% elif object.is_pending %}
+                            <label class="badge badge-info">
+                              in Review
+                            </label>
+                            {% else %}
+                            <label class="badge badge-info" style="cursor: pointer;" data-toggle="modal"  data-target="#dept_reason{{forloop.counter}}">
+                              disapproved view reason
+                            </label>
+                            {% endif %}
                           </td>
+
                           <td class="text-center">
+                            {% if object.hod_approval %}
                             <label class="badge badge-info">
-                              {{ object.hod_approval}}
+                              approved
                             </label>
+                            {% elif object.is_pending and object.dept_approval %}
+                            <label class="badge badge-info">
+                              in Review
+                            </label>
+                            {% elif not object.dept_approval %}
+                            <label class="badge badge-info">
+                              Precluded
+                            </label>
+                            {% else %}
+                            <label class="badge badge-info" style="cursor: pointer;" data-toggle="modal"  data-target="#hod_reason{{forloop.counter}}">
+                              disapproved view reason
+                            </label>
+                            {% endif %}
                           </td>
+
                           <td class="text-center">
+                            {% if object.dean_approval %}
                             <label class="badge badge-info">
-                              {{ object.dean_approval}}
+                              approved
                             </label>
+                            {% elif object.is_pending and object.hod_approval %}
+                            <label class="badge badge-info">
+                              in Review
+                            </label>
+                            {% elif not object.hod_approval %}
+                            <label class="badge badge-info">
+                              Precluded
+                            </label>
+                            {% else %}
+                            <label class="badge badge-info" style="cursor: pointer;" data-toggle="modal"  data-target="#dean_reason{{forloop.counter}}" >
+                              disapproved view reason
+                            </label>
+                            {% endif %}
                           </td>
+
                           <td class="text-center">
+                            {% if object.central_approval %}
                             <label class="badge badge-info">
-                              {{ object.central_approval}}
+                              approved
                             </label>
+                            {% elif object.is_pending and object.dean_approval %}
+                            <label class="badge badge-info">
+                                in Review
+                            </label>
+                            {% elif not object.dean_approval %}
+                            <label class="badge badge-info">
+                              Precluded
+                            </label>
+                            {% else %}
+                            <label class="badge badge-info" style="cursor: pointer;" data-toggle="modal"  data-target="#central_reason{{forloop.counter}}">
+                              disapproved view reason
+                            </label>
+                            {% endif %}
                           </td>
+
+
                           {% endif %}
 
                           <td>
 
                             {% if request.user.is_dept or request.user.is_hod or request.user.is_dean or request.user.is_central %}
 
-                                <button type="button" class="btn btn-info btn-icon-text btn-sm" data-toggle="modal"  data-target="#detailsModal{{forloop.counter}}"> Details </button>
+                                <button type="button" class="btn btn-info btn-icon-text btn-sm" data-toggle="modal"  data-target="#detailsModal{{forloop.counter}}"> Approve </button>
+                                <button type="button" class="btn btn-info btn-icon-text btn-sm" data-toggle="modal"  data-target="#disapproveModal{{forloop.counter}}"> DisApprove </button>
 
+
+                              <div class="modal fade" id="disapproveModal{{forloop.counter}}" style="display: none;" aria-hidden="true">
+                                <div class="modal-dialog" id="uploadDialog" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title">Disapprove Promotion
+                                      </h5>
+                                      <button type="button" class="close btn btn-secondary" data-dismiss="modal"><span>×</span>
+                                      </button>
+                                    </div>
+                                    <form action="{% url 'auth:disapprove_pro' object.pk %}" method="post">
+                                      <div class="modal-body">
+                                        <p><b>Reason for Disapproval: </b></p>
+                                        <textarea name="disapprove" required cols="30" rows="10" class="form-control"></textarea>
+                                        {% csrf_token %}
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                                        <button class="btn btn-info" type="submit">Disapprove</button>
+                                      </div>
+
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
 
                               <div class="modal fade" id="detailsModal{{forloop.counter}}" style="display: none;" aria-hidden="true">
                                 <div class="modal-dialog" id="uploadDialog" role="document">
@@ -147,25 +237,107 @@
                                 <div class="modal-dialog" id="uploadDialog" role="document">
                                   <div class="modal-content">
                                     <div class="modal-header">
-                                      <h5 class="modal-title">delete {% include 'partials/user_type.html' %} ?
+                                      <h5 class="modal-title">delete Application?
                                       </h5>
                                       <button type="button" class="close btn btn-secondary" data-dismiss="modal"><span>×</span>
                                       </button>
                                     </div>
                                     <form method="post" action="{% url 'auth:delete_promotion' object.pk %}">
                                       <div class="modal-body">
-                                        <p>Are you sure you want to delete application for {{object.position.position_title}}?</p>
+                                        <p>Are you sure you want to delete application?</p>
                                         {% csrf_token %}
                                       </div>
                                       <div class="modal-footer">
                                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                                        <button type="submit" class="btn btn-success text-white">Delete Account</button>
+                                        <button type="submit" class="btn btn-success text-white">Delete</button>
                                       </div>
                                     </form>
                                   </div>
                                 </div>
                               </div>
                             {% endif %}
+
+                            <!-- Disapproval reasons -->
+                            <div class="modal fade" id="dept_reason{{forloop.counter}}" style="display: none;" aria-hidden="true">
+                              <div class="modal-dialog" id="uploadDialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Disapproval Reasons
+                                    </h5>
+                                    <button type="button" class="close btn btn-secondary" data-dismiss="modal"><span>×</span>
+                                    </button>
+                                  </div>
+                                    <div class="modal-body">
+                                      <p><b>Reason for disapproval </b></p>
+                                      <p>{{ object.dept_disapproval_reason }} </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="modal fade" id="hod_reason{{forloop.counter}}" style="display: none;" aria-hidden="true">
+                              <div class="modal-dialog" id="uploadDialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Disapproval Reasons
+                                    </h5>
+                                    <button type="button" class="close btn btn-secondary" data-dismiss="modal"><span>×</span>
+                                    </button>
+                                  </div>
+                                    <div class="modal-body">
+                                      <p><b>Reason for disapproval </b></p>
+                                      <p>{{ object.hod_disapproval_reason }} </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="modal fade" id="dean_reason{{forloop.counter}}" style="display: none;" aria-hidden="true">
+                              <div class="modal-dialog" id="uploadDialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Disapproval Reasons
+                                    </h5>
+                                    <button type="button" class="close btn btn-secondary" data-dismiss="modal"><span>×</span>
+                                    </button>
+                                  </div>
+                                    <div class="modal-body">
+                                      <p><b>Reason for disapproval </b></p>
+                                      <p>{{ object.dean_disapproval_reason }} </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="modal fade" id="central_reason{{forloop.counter}}" style="display: none;" aria-hidden="true">
+                              <div class="modal-dialog" id="uploadDialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Disapproval Reasons
+                                    </h5>
+                                    <button type="button" class="close btn btn-secondary" data-dismiss="modal"><span>×</span>
+                                    </button>
+                                  </div>
+                                    <div class="modal-body">
+                                      <p><b>Reason for disapproval </b></p>
+                                      <p>{{ object.central_disapproval_reason }} </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
                           </td>
 
                         </tr>

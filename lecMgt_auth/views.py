@@ -170,6 +170,7 @@ class LeaveCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return context
 
     def form_valid(self, form):
+
         form.instance.user = self.request.user
         form = super().form_valid(form)
 
@@ -180,7 +181,7 @@ class ManageLeaves(LoginRequiredMixin, ListView):
     template_name = 'backend/auth/leave/manage_leave.html'
 
     def get_queryset(self):
-        return Leave.objects.all().order_by('-created')
+        return Leave.objects.filter(user=self.request.user).order_by('-created')
 
     def get_success_url(self):
         return reverse("auth:manage_leaves")
@@ -272,11 +273,17 @@ class EditNoticeView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         return reverse("auth:manage_notice")
 
 
+class DeleteNoticeView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = Notice
+    success_message = 'Deleted successfully!'
+    success_url = reverse_lazy('auth:manage_notice')
+
+
 class ManageLecturerAccounts(LoginRequiredMixin, ListView):
     template_name = 'backend/auth/manage_accounts.html'
 
     def get_queryset(self):
-        return User.objects.filter(department=self.request.user.department, is_dept=False).order_by('-date_joined')
+        return User.objects.filter(department=self.request.user.department, is_dept=False, is_hod=False).order_by('-date_joined')
 
     def get_success_url(self):
         return reverse("auth:manage_accounts")
@@ -314,47 +321,60 @@ class ApplyPromotionView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         # Get lecturer details
-        user = User.objects.get(email=self.request.user)
-        profile = LecturerProfile.objects.get(user_id=user.user_id)
 
-        if profile.position.position_grade > form.instance.position.position_grade:
-            messages.error(
-                self.request, "Current position is higher than applying position")
-            form = super().form_invalid(form)
-            return form
+        try:
+            user = User.objects.get(email=self.request.user)
+            profile = LecturerProfile.objects.get(user_id=user.user_id)
 
-        else:
-
-            # get applying position grade
-            if profile.position.position_title == form.instance.position.position_title:
-
-                messages.error(self.request, "Already at current position")
+            if profile.position.position_grade > form.instance.position.position_grade:
+                messages.error(
+                    self.request, "Current position is higher than applying position")
                 form = super().form_invalid(form)
-
                 return form
 
-            elif profile.grade_point >= form.instance.position.position_grade:
-                form.instance.lecturer = profile
+            else:
 
-                promotion = Promotion.objects.filter(
-                    lecturer=profile, is_pending=True).exists()
+                # get applying position grade
+                if profile.position.position_title == form.instance.position.position_title:
 
-                if promotion:
-                    messages.error(
-                        self.request, "Your have a pending promotion application")
+                    messages.error(self.request, "Already at current position")
                     form = super().form_invalid(form)
 
                     return form
 
-                form = super().form_valid(form)
-                return form
+                elif profile.grade_point >= form.instance.position.position_grade:
+                    form.instance.lecturer = profile
 
-            else:
-                messages.error(
-                    self.request, "Your grade point is lesser than the position grade point")
-                form = super().form_invalid(form)
+                    promotion = Promotion.objects.filter(
+                        lecturer=profile, is_pending=True).exists()
 
-                return form
+                    if promotion:
+                        messages.error(
+                            self.request, "Your have a pending promotion application")
+                        form = super().form_invalid(form)
+
+                        return form
+
+                    form = super().form_valid(form)
+                    return form
+
+                else:
+                    messages.error(
+                        self.request, "Your grade point is lesser than the position grade point")
+                    form = super().form_invalid(form)
+
+                    return form
+
+        except LecturerProfile.DoesNotExist:
+            messages.error(
+                self.request, "Profile not found!, contact departmental admin")
+        except User.DoesNotExist:
+            messages.error(
+                self.request, "Profile not found!, contact departmental admin")
+        except AttributeError:
+            messages.error(
+                self.request, "Profile not updated!, contact departmental admin")
+        return redirect('auth:dashboard')
 
 
 class ManagePromotions(LoginRequiredMixin, ListView):
@@ -362,16 +382,16 @@ class ManagePromotions(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.user.is_dept:
-            return Promotion.objects.filter(dept_approval=False).order_by('-date_applied')
+            return Promotion.objects.filter(dept_approval=False, is_pending=True).order_by('-date_applied')
 
         if self.request.user.is_hod:
-            return Promotion.objects.filter(hod_approval=False).order_by('-date_applied')
+            return Promotion.objects.filter(dept_approval=True, hod_approval=False, is_pending=True).order_by('-date_applied')
 
         if self.request.user.is_dean:
-            return Promotion.objects.filter(dean_approval=False).order_by('-date_applied')
+            return Promotion.objects.filter(hod_approval=True, dean_approval=False, is_pending=True).order_by('-date_applied')
 
         if self.request.user.is_central:
-            return Promotion.objects.filter(central_approval=False).order_by('-date_applied')
+            return Promotion.objects.filter(dean_approval=True, central_approval=False, is_pending=True).order_by('-date_applied')
 
         if self.request.user.is_staff:
             return Promotion.objects.all().order_by('-date_applied')
@@ -415,6 +435,34 @@ class ApprovePromotionView(LoginRequiredMixin, View):
 
         messages.success(
             request, 'promotion has been approved')
+        pro.save()
+
+        return redirect('auth:manage_promotion')
+
+
+class DisapprovePromotionView(LoginRequiredMixin, View):
+
+    def post(self, request, pro_id):
+        disapprove = request.POST['disapprove']
+        pro = Promotion.objects.get(pro_id=pro_id)
+        if request.user.is_dept:
+            pro.dept_disapproval_reason = disapprove
+        elif request.user.is_hod:
+            pro.hod_disapproval_reason = disapprove
+        elif request.user.is_dean:
+            pro.dean_disapproval_reason = disapprove
+        elif request.user.is_central:
+            pro.central_disapproval_reason = disapprove
+
+        else:
+            messages.error(
+                request, 'You are not authorized')
+            return redirect('auth:manage_promotion')
+
+        messages.success(
+            request, 'promotion has been disapprove')
+
+        pro.is_pending = False
         pro.save()
 
         return redirect('auth:manage_promotion')

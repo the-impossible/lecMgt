@@ -32,7 +32,7 @@
       </a>
     </li>
 
-    {% elif request.user.is_dept %}
+    {% elif request.user.is_dept or request.user.is_hod %}
 
     {% comment %} NOTICE {% endcomment %}
     <li class="nav-item">

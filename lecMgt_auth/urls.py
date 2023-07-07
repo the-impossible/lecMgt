@@ -24,6 +24,7 @@ urlpatterns = [
 
     path('create_notice', NoticeCreateView.as_view(), name="create_notice"),
     path('manage_notice', ManageNotice.as_view(), name="manage_notice"),
+    path('delete_notice/<str:pk>', DeleteNoticeView.as_view(), name="delete_notice"),
     path('edit_notice/<str:pk>', EditNoticeView.as_view(), name="edit_notice"),
 
     path('manage_lecturers', ManageLecturerAccounts.as_view(),
@@ -37,6 +38,8 @@ urlpatterns = [
          DeletePromotionView.as_view(), name="delete_promotion"),
     path('approve_pro/<str:pro_id>',
          ApprovePromotionView.as_view(), name="approve_pro"),
+    path('disapprove_pro/<str:pro_id>',
+         DisapprovePromotionView.as_view(), name="disapprove_pro"),
 
     path('profile/<str:pk>', ProfileView.as_view(), name="profile"),
     path('password', ChangePassword.as_view(), name="password"),
